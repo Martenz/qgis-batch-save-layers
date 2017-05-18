@@ -255,20 +255,26 @@ class BatchSaveLayers:
         else:
             pass
         if self.dlg.checkBox_csv.isChecked():
-            self.save_csv()
+            self.save_csv(delimiter='COMMA')
+        else:
+            pass
+        if self.dlg.checkBox_csv_semic.isChecked():
+            self.save_csv(delimiter='SEMICOLON')
         else:
             pass
 
     # save CSV
-    def save_csv(self):
+    def save_csv(self,delimiter="SEMICOLON"):
         layers = self.iface.legendInterface().layers()
         output_dir = self.dlg.lineEdit.text() + "/CSV/"
+
+        opts = ["SEPARATOR="+delimiter, 'GEOMETRY=AS_WKT']
         # create directory if it doesn't exist
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         for f in layers:
                 if f.type() == 0:
-                    writer = QgsVectorFileWriter.writeAsVectorFormat( f, output_dir + f.name() + ".csv", "utf-8", f.crs(), "CSV", layerOptions='GEOMETRY=AS_WKT')
+                    writer = QgsVectorFileWriter.writeAsVectorFormat( f, output_dir + f.name() + ".csv", "utf-8", f.crs(), "CSV", layerOptions=opts)
                     if writer == QgsVectorFileWriter.NoError:
                         self.iface.messageBar().pushMessage("Layer Saved", f.name() + ".csv saved to " + output_dir, 0, 2)
                     else:
